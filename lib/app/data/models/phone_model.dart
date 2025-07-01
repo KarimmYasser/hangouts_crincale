@@ -30,7 +30,7 @@ class PhoneModel {
     String brandId,
   ) {
     return PhoneModel(
-      id: id,
+      id: '$brandId $id',
       name: json['name'] as String,
       brandId: brandId,
       file:

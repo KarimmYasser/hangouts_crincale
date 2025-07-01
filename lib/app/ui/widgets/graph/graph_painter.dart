@@ -184,16 +184,13 @@ class GraphPainter extends CustomPainter {
   }
 
   void _drawLabels(Canvas canvas, Size size) {
-    // Start the first label at 85% of the canvas height
     double labelYOffset = size.height * 0.85;
 
     for (var curve in graphController.curves) {
-      // Only draw labels for curves that are visible and have data
       if (!curve.isVisible.value || curve.data.isEmpty) continue;
 
       _drawLabelShape(canvas, size, curve, labelYOffset);
 
-      // Decrement the Y position for the next label
       labelYOffset -= 20;
     }
   }
@@ -214,7 +211,7 @@ class GraphPainter extends CustomPainter {
 
     // 2. Prepare the text to measure it
     final textPainter = TextPainter(
-      text: TextSpan(text: '${curve.brandID} ${curve.name}', style: labelStyle),
+      text: TextSpan(text: curve.id, style: labelStyle),
       textDirection: TextDirection.ltr,
     )..layout();
 
