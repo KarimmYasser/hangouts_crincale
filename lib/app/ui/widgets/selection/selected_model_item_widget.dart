@@ -17,7 +17,7 @@ class SelectedModelItemWidget extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
       decoration: BoxDecoration(
         color:
-            model.reviewScore!.toLowerCase() != 'approved'
+            (model.reviewScore ?? 'Untested').toLowerCase() != 'approved'
                 ? Theme.of(context).primaryColor
                 : Colors.orange[700],
         borderRadius: BorderRadius.circular(12.0),
@@ -46,13 +46,12 @@ class SelectedModelItemWidget extends StatelessWidget {
           Row(
             children: [
               Text(
-                model.reviewScore == null
-                    ? ''
-                    : (model.reviewScore!.toLowerCase() == 'approved'
-                        ? '✅ Approved'
-                        : model.reviewScore!.toLowerCase() == 'tested'
-                        ? '🌡️ Tested'
-                        : '❓ Untested'),
+                ((model.reviewScore ?? 'Untested').toLowerCase() == 'approved'
+                    ? '✅ Approved'
+                    : (model.reviewScore ?? 'Untested').toLowerCase() ==
+                        'tested'
+                    ? '🌡️ Tested'
+                    : '❓ Untested'),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -61,7 +60,7 @@ class SelectedModelItemWidget extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                model.price ?? '',
+                model.price ?? 'Discont.',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,

@@ -36,7 +36,7 @@ class FrequencyResponse {
       identical(this, other) ||
       other is FrequencyResponse &&
           runtimeType == other.runtimeType &&
-          id == other.id;
+          id + brandID == other.id + other.brandID;
 
   @override
   int get hashCode => id.hashCode;
