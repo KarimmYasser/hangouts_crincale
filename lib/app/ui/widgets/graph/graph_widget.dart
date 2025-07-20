@@ -16,7 +16,7 @@ class GraphWidget extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       elevation: 4,
       child: Container(
-        height: 300,
+        height: MediaQuery.of(context).size.height * 0.35,
         color: const Color(0xFFFFF8EB),
         child: GetBuilder<GraphController>(
           builder:

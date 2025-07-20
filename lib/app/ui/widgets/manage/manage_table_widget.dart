@@ -46,6 +46,8 @@ class ManageTableWidget extends StatelessWidget {
                       child: ListTile(
                         leading: Icon(Icons.show_chart, color: curve.color),
                         title: Text('${curve.brandID} ${curve.name}'),
+                        contentPadding: EdgeInsets.zero,
+                        horizontalTitleGap: 4,
                         trailing: Wrap(
                           spacing: 0,
                           children: [
@@ -57,6 +59,9 @@ class ManageTableWidget extends StatelessWidget {
                                 color: theme.colorScheme.primary,
                               ),
                               tooltip: "Set as Baseline",
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              visualDensity: VisualDensity.compact,
                               onPressed: () => controller.setBaseline(curve),
                             ),
                             IconButton(
@@ -66,6 +71,9 @@ class ManageTableWidget extends StatelessWidget {
                                     : Icons.visibility_off,
                                 color: Colors.grey[600],
                               ),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              visualDensity: VisualDensity.compact,
                               tooltip: "Hide/Show Curve",
                               onPressed: () => controller.hideCurve(curve.id),
                             ),
@@ -74,6 +82,9 @@ class ManageTableWidget extends StatelessWidget {
                                 Icons.delete_outline,
                                 color: Colors.red[400],
                               ),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              visualDensity: VisualDensity.compact,
                               tooltip: "Remove Curve",
                               onPressed: () => controller.removeCurve(curve.id),
                             ),

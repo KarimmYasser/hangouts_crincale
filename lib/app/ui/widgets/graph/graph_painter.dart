@@ -45,7 +45,7 @@ class GraphPainter extends CustomPainter {
           ..strokeWidth = 1.0;
 
     final labelStyle = TextStyle(color: Colors.black, fontSize: 10);
-    final smallLabelStyle = TextStyle(color: Colors.black, fontSize: 6);
+    final smallLabelStyle = TextStyle(color: Colors.black, fontSize: 4);
 
     // --- Vertical Grid Lines (Frequency) ---
     final freqLines = [
@@ -107,7 +107,7 @@ class GraphPainter extends CustomPainter {
       )..layout();
       if (size.width > 600 || isBold) {
         if (freq < 15000) {
-          textPainter.paint(canvas, Offset(x + 2, size.height - 14));
+          textPainter.paint(canvas, Offset(x + 1, size.height - 14));
         } else if (freq == 15000 || freq == 20000) {
           textPainter.paint(canvas, Offset(x - 16, size.height - 14));
         }
@@ -117,7 +117,7 @@ class GraphPainter extends CustomPainter {
           textDirection: TextDirection.ltr,
         )..layout();
         if (freq < 15000) {
-          textTempPainter.paint(canvas, Offset(x + 1, size.height - 12));
+          textTempPainter.paint(canvas, Offset(x + 1, size.height - 10));
         } else if (freq == 20000) {
           textTempPainter.paint(canvas, Offset(x - 8, size.height - 12));
         }
@@ -205,7 +205,7 @@ class GraphPainter extends CustomPainter {
     final shapePaint = Paint()..color = const Color(0xFFFFF8EB);
     final labelStyle = TextStyle(
       color: curve.color,
-      fontSize: 12,
+      fontSize: 8,
       fontWeight: FontWeight.bold,
     );
 
@@ -218,8 +218,8 @@ class GraphPainter extends CustomPainter {
     // 3. Define shape properties
     const horizontalPadding = 8.0;
     const verticalPadding = 4.0;
-    const cornerRadius = Radius.circular(8.0);
-    final labelXPosition = size.width * 0.6255;
+    const cornerRadius = Radius.circular(4.0);
+    final labelXPosition = size.width * 0.6;
 
     final rectWidth = textPainter.width + (horizontalPadding * 2);
     final rectHeight = textPainter.height + (verticalPadding * 2);

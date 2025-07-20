@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+
 import '../data/models/brand.dart';
-import '../data/models/phone_model.dart';
 import '../data/models/frequency_response.dart';
+import '../data/models/phone_model.dart';
 import 'graph_controller.dart';
 
 // Enum to control which list (Brands or Models) is currently active.
@@ -41,7 +43,7 @@ class SelectionController extends GetxController {
     debounce(
       searchQuery,
       (_) => _filterLists(),
-      time: Duration(milliseconds: 300),
+      time: const Duration(milliseconds: 300),
     );
   }
 
@@ -114,26 +116,112 @@ class SelectionController extends GetxController {
   }
 
   /// Selects a model, fetches its FR data, and adds it to the graph.
-  void selectModel(PhoneModel model, {Color color = Colors.red}) {
-    if (graphController.curves.any((curve) => curve.id == model.id)) {
-      graphController.removeCurve(model.id);
+  void selectModel(PhoneModel model) async {
+    final bool isModelLoaded = graphController.curves.any(
+      (curve) => curve.id.startsWith(model.id),
+    );
+
+    if (isModelLoaded) {
+      graphController.curves.removeWhere(
+        (curve) => curve.id.startsWith(model.id),
+      );
+      if (graphController.baselineCurve.value != null &&
+          graphController.baselineCurve.value!.id.startsWith(model.id)) {
+        graphController.baselineCurve.value = null;
+      }
     } else {
-      // In a real app, you would now fetch the detailed FR data for this model.
-      // For this example, we'll create some dummy data.
-      final dummyData = List.generate(
-        100,
-        (i) => DataPoint(frequency: 20.0 + i * 200, db: -5 + (i % 10) - 5),
-      );
-      final newCurve = FrequencyResponse(
-        id: model.id,
-        name: model.name,
-        brandID: model.brandId,
-        data: dummyData,
-        color: _getRandomDarkColor(),
-      );
-      graphController.addCurve(newCurve);
+      if (model.file != null && model.file!.isNotEmpty) {
+        final baseFileName = model.file![0];
+        final color = _getRandomDarkColor();
+
+        try {
+          final leftData = await _loadDataFromFile('$baseFileName L.txt');
+          final rightData = await _loadDataFromFile('$baseFileName R.txt');
+
+          // Add Left and Right curves
+          if (graphController.curves.isEmpty) {
+            final leftCurve = FrequencyResponse(
+              id: '${model.id} (L)',
+              name: '${model.name} (L)',
+              brandID: model.brandId,
+              data: leftData,
+              color: _getRandomDarkColor(),
+            );
+            graphController.addCurve(leftCurve);
+
+            final rightCurve = FrequencyResponse(
+              id: '${model.id} (R)',
+              name: '${model.name} (R)',
+              brandID: model.brandId,
+              data: rightData,
+              color: _getRandomDarkColor(),
+            );
+            graphController.addCurve(rightCurve);
+          } else {
+            // Add Average curve
+            if (leftData.isNotEmpty && rightData.isNotEmpty) {
+              final averageData = _calculateAverageData(leftData, rightData);
+              final averageCurve = FrequencyResponse(
+                id: '${model.id} (Avg)',
+                name: '${model.name} (Avg)',
+                brandID: model.brandId,
+                data: averageData,
+                color: _getRandomDarkColor(),
+              );
+              graphController.addCurve(averageCurve);
+            }
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            print('Error loading files for ${model.name}: $e');
+          }
+        }
+      }
     }
     filteredModels.refresh();
+  }
+
+  List<DataPoint> _calculateAverageData(
+    List<DataPoint> data1,
+    List<DataPoint> data2,
+  ) {
+    List<DataPoint> averageData = [];
+    final int length = min(data1.length, data2.length);
+    for (int i = 0; i < length; i++) {
+      // Assuming frequencies align
+      if (data1[i].frequency == data2[i].frequency) {
+        final avgDb = (data1[i].db + data2[i].db) / 2;
+        averageData.add(DataPoint(frequency: data1[i].frequency, db: avgDb));
+      }
+    }
+    return averageData;
+  }
+
+  /// Loads and parses frequency response data from a given asset file.
+  Future<List<DataPoint>> _loadDataFromFile(String fileName) async {
+    final String fileContent = await rootBundle.loadString(
+      'assets/data/$fileName',
+    );
+    final List<DataPoint> dataPoints = [];
+    final lines = fileContent.split('\n');
+
+    for (final line in lines) {
+      // Skip header lines and empty lines
+      if (line.startsWith('*') || line.trim().isEmpty) {
+        continue;
+      }
+
+      final parts = line.split(RegExp(r'[,\s]+'));
+      if (parts.length >= 2) {
+        final frequency = double.tryParse(parts[0]);
+        final db = double.tryParse(parts[1]);
+
+        if (frequency != null && db != null) {
+          dataPoints.add(DataPoint(frequency: frequency, db: db));
+        }
+      }
+    }
+    return dataPoints;
   }
 
   /// Changes the active selection tab.

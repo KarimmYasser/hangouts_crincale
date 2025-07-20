@@ -54,6 +54,7 @@ flutter:
     - assets/phones/phone_book.json
     - assets/svgs/logo.svg
     - assets/images/logo.png
+    - assets/data/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

@@ -63,7 +63,7 @@ class SelectionPanelWidget extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final model = controller.filteredModels[index];
                     if (controller.graphController.curves.any(
-                      (curve) => curve.id == model.id,
+                      (curve) => curve.id.contains(model.id),
                     )) {
                       return SelectedModelItemWidget(model: model);
                     }
