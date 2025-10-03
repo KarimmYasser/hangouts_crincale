@@ -1,5 +1,7 @@
 # Hangouts Crincale - Frequency Response Tool
 
+![Hangouts Crincale Cover](hangouts_crincale_cover.png)
+
 A comprehensive Flutter application for analyzing, visualizing, and equalizing headphone and IEM (In-Ear Monitor) frequency response measurements. This tool provides professional-grade audio analysis capabilities with an intuitive user interface.
 
 ## 🎯 Overview
